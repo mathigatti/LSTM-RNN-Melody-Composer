@@ -73,7 +73,7 @@ input_data = input_data.astype(np.bool)
 target_data = target_data.astype(np.bool)
 
 
-input_dim = input_data.shape[2]
+input_dim = (input_data.shape[1], input_data.shape[2])
 output_dim = target_data.shape[1]
 
 
