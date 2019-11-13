@@ -14,7 +14,7 @@ import time
 import csv
 import glob
 
-np.set_printoptions(threshold=np.nan) #Comment that line out, to print reduced matrices
+#np.set_printoptions(threshold=np.nan) #Comment that line out, to print reduced matrices
 
 
 #User Info
