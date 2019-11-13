@@ -41,10 +41,13 @@ print()
 chord_train_files = glob.glob("%s*.mid" %(chord_train_dir))
 mel_train_files = glob.glob("%s*.mid" %(mel_train_dir))
 
-
+import sys
 
 print("Choose a resolution factor. (e.g. Resolution_Factor=24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution, etc...)")
-resolution_factor = int(input('Resolution Factor (recommended=12):')) #24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution
+#resolution_factor = int(input('Resolution Factor (recommended=12):')) #24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution
+resolution_factor = int(sys.argv[1]) #24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution
+
+
 
 #Preprocessing: Get highest and lowest notes + maximum midi_ticks overall midi files
 chord_lowest_note, chord_highest_note, chord_ticks = data_utils_train.getNoteRangeAndTicks(chord_train_files, res_factor=resolution_factor)
@@ -76,20 +79,22 @@ output_dim = target_data.shape[1]
 
 print()
 print("For how many epochs do you wanna train?")
-num_epochs = int(input('Num of Epochs:'))
+
+num_epochs = int(sys.argv[2])
 print()
 
 print()
 print("Choose a batch size:")
 print("(Batch size determines how many training samples per gradient-update are used. --> Number of gradient-updates per epoch: Num of samples / batch size)")
-batch_size = int(input('Batch Size (recommended=128):'))
+#batch_size = int(input('Batch Size (recommended=128):'))
+batch_size = int(sys.argv[3])
 print()
 
 print()
 print("Network Input Dimension:", input_dim)
 print("Network Output Dimension:", output_dim)
 print("How many layers should the network have?")
-num_layers = int(input('Number of Layers:'))
+num_layers = int(sys.argv[4])
 print()
 
 
@@ -99,7 +104,7 @@ print()
 model = Sequential()
 if num_layers == 1:
     print("Your Network:")
-    model.add(LSTM(input_dim=input_dim, output_dim=output_dim, activation='sigmoid', return_sequences=False))
+    model.add(LSTM(input_shape=input_dim, output_shape=output_dim, activation='sigmoid', return_sequences=False))
     print("add(LSTM(input_dim=%d, output_dim=%d, activation='sigmoid', return_sequences=False))" %(input_dim, output_dim))
 elif num_layers > 1:
     print("Enter the number of units for each layer:")
@@ -109,7 +114,7 @@ elif num_layers > 1:
         num_units.append(units)
     print()
     print("Your Network:")
-    model.add(LSTM(input_dim=input_dim, output_dim=num_units[0], activation='sigmoid', return_sequences=True))
+    model.add(LSTM(input_shape=input_dim, output_shape=num_units[0], activation='sigmoid', return_sequences=True))
     print("add(LSTM(input_dim=%d, output_dim=%d, activation='sigmoid', return_sequences=True))" %(input_dim, num_units[0]))
     for i in range(num_layers-2):
         model.add(LSTM(output_dim=num_units[i+1], activation='sigmoid', return_sequences=True))
@@ -130,13 +135,13 @@ print("Class Mode: ", class_mode)
 print("Number of Epochs: ", num_epochs)
 print("Batch Size: ", batch_size)
 
-model.compile(loss=loss_function, optimizer=optimizer, class_mode=class_mode)
+model.compile(loss=loss_function, optimizer=optimizer)
 
 
 print()
 print("Training...")
 history = data_utils_train.LossHistory()
-model.fit(input_data, target_data, batch_size=batch_size, nb_epoch=num_epochs, callbacks=[history])
+model.fit(input_data, target_data, batch_size=batch_size, epochs=num_epochs, callbacks=[history])
 w = csv.writer(open("./history_csv/%dlayer_%sepochs_%s.csv" %(num_layers, num_epochs, time.strftime("%Y%m%d_%H_%M")), "w"))
 for loss in history.losses:
     w.writerow([loss])

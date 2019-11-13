@@ -53,8 +53,10 @@ print("Melodies will be saved to the files:")
 print(composition_files)
 print()
 
+import sys
+
 print("Choose a resolution factor. (e.g. Resolution_Factor=24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution, etc...)")
-resolution_factor = int(input('Resolution Factor (recommended=12):')) #24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution
+resolution_factor = int(sys.argv[1]) #24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution
 
 
 chord_lowest_note, chord_highest_note, chord_ticks = data_utils_compose.getNoteRangeAndTicks(chord_files, res_factor=resolution_factor)
@@ -72,7 +74,7 @@ class_mode = "binary"
 print()
 print()
 print("Enter the threshold (threshold is used for creating a Piano Roll Matrix out of the Network Output)")
-thresh = float(input('Threshold (recommended ~ 0.1):'))
+thresh = 0.1
 
 print()
 print()
@@ -88,7 +90,7 @@ for i, file in enumerate(model_files):
     print(str(i) + " : " + file)
 print("---------------------------------------")
 print()
-file_number_model = int(input('Type in the number in front of the file you want to choose:')) 
+file_number_model = 0
 model_file = model_files[file_number_model]
 model_path = '%s%s' %(model_dir, model_file)
 
@@ -103,7 +105,7 @@ for i, file in enumerate(weights_files):
     print(str(i) + " : " + file)
 print("---------------------------------------")
 print()
-file_number_weights = int(input('Type in the number in front of the file you want to choose:')) 
+file_number_weights = 0
 weights_file = weights_files[file_number_weights]
 weights_path = '%s%s' %(weights_dir, weights_file)
 
