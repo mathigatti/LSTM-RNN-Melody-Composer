@@ -99,6 +99,8 @@ model.compile(loss=loss_function, optimizer=optimizer)
 
 print("Training...")
 
+filepath = "weights-improvement-{epoch:02d}-{loss:.4f}-bigger.hdf5"    
+
 checkpoint = ModelCheckpoint(
     filepath, monitor='loss', 
     verbose=0,        
