@@ -86,8 +86,8 @@ elif num_layers > 1:
 
 
 print("Compiling your network with the following properties:")
-loss_function = 'categorical_crossentropy'
-optimizer = 'rmsprop'
+loss_function = 'binary_crossentropy'
+optimizer = 'adam'
 
 print("Loss function: ", loss_function)
 print("Optimizer: ", optimizer)
