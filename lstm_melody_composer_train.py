@@ -86,8 +86,8 @@ elif num_layers > 1:
 
 
 print("Compiling your network with the following properties:")
-loss_function = 'binary_crossentropy'
-optimizer = 'adam'
+loss_function = 'categorical_crossentropy'
+optimizer = 'rmsprop'
 
 print("Loss function: ", loss_function)
 print("Optimizer: ", optimizer)
@@ -99,7 +99,7 @@ model.compile(loss=loss_function, optimizer=optimizer)
 
 print("Training...")
 
-filepath = "weights-improvement-{epoch:02d}-{loss:.4f}-bigger.hdf5"    
+filepath = "weights/weights-improvement-{epoch:02d}-{loss:.4f}-bigger.hdf5"    
 
 checkpoint = ModelCheckpoint(
     filepath, monitor='loss', 
@@ -113,7 +113,7 @@ model.fit(input_data, target_data, batch_size=batch_size, epochs=num_epochs, cal
 print()
 print("Saving model and weights...")
 print("Saving weights...")
-weights_dir = './weights/'
+weights_dir = 'weights/'
 weights_file = '%dlayer_%sepochs_%s' %(num_layers, num_epochs, time.strftime("%Y%m%d_%H_%M.h5"))
 weights_path = '%s%s' %(weights_dir, weights_file)
 print("Weights Path:", weights_path)
@@ -122,7 +122,7 @@ model.save_weights(weights_path)
 print("Saving model...")
 json_string = model.to_json()
 model_file = '%dlayer_%sepochs_%s' %(num_layers, num_epochs, time.strftime("%Y%m%d_%H_%M.json"))
-model_dir = './saved_model/'
+model_dir = 'weights/saved_model/'
 model_path = '%s%s' %(model_dir, model_file)
 print("Model Path:", model_path)
 open(model_path, 'w').write(json_string)
