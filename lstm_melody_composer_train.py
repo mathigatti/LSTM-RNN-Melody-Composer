@@ -114,10 +114,10 @@ elif num_layers > 1:
         num_units.append(units)
     print()
     print("Your Network:")
-    model.add(LSTM(input_shape=input_dim, output_shape=num_units[0], activation='sigmoid', return_sequences=True))
+    model.add(LSTM(num_units[0],input_shape=input_dim, activation='sigmoid', return_sequences=True))
     print("add(LSTM(input_dim=%d, output_dim=%d, activation='sigmoid', return_sequences=True))" %(input_dim, num_units[0]))
     for i in range(num_layers-2):
-        model.add(LSTM(output_dim=num_units[i+1], activation='sigmoid', return_sequences=True))
+        model.add(LSTM(num_units[i+1], activation='sigmoid', return_sequences=True))
         print("add(LSTM(output_dim=%d, activation='sigmoid', return_sequences=True))" %(num_units[i+1]))
     model.add(LSTM(output_dim=output_dim, activation='sigmoid', return_sequences=False))
     print("add(LSTM(output_dim=%d, activation='sigmoid', return_sequences=False))" %(output_dim))
