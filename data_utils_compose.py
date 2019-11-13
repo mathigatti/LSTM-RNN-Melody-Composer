@@ -8,8 +8,6 @@ Created on Thu Nov 26 16:07:48 2015
 from mido import MidiFile, MidiTrack, Message
 from mido import MetaMessage
 import numpy as np
-#np.set_printoptions(threshold=np.nan)
-
 
 def getNoteRangeAndTicks(files_dir, res_factor=1):
     ticks = []

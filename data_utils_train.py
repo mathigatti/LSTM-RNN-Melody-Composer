@@ -9,8 +9,6 @@ from mido import MidiFile, MidiTrack, Message
 from mido import MetaMessage
 from keras.callbacks import Callback
 import numpy as np
-#np.set_printoptions(threshold=np.nan)
-
 
 def getNoteRangeAndTicks(files_dir, res_factor=1):
     ticks = []
@@ -47,8 +45,8 @@ def fromMidiCreatePianoRoll(files_dir, ticks, lowest_note, highest_note, res_fac
 
 
 def getNoteTimeOnOffArray(mid, res_factor):
-    
-    note_time_onoff_array = []  
+
+    note_time_onoff_array = []
     
     for track in mid.tracks:
         current_time = 0

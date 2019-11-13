@@ -11,20 +11,13 @@ from keras.layers.recurrent import LSTM
 from keras.callbacks import ModelCheckpoint
 import numpy as np
 import time
-import csv
 import glob
-
-#np.set_printoptions(threshold=np.nan) #Comment that line out, to print reduced matrices
-
 
 #User Info
 print()
 print("User Information:")
 print("This is a tool for training a LSTM Recurrent Neural Network to learn melodies to given chord sequences.")
 print("It has been created in Fall 2015 by Konstantin Lackner under the supervision of Thomas Volk and Prof. Diepold at the Chair of Data Processing at the Technical University of Munich (TUM).")
-#print("For more information please visist: ...")
-print()
-
 
 chord_train_dir = './trainData/chords/'
 mel_train_dir = './trainData/melody/'
@@ -43,11 +36,8 @@ mel_train_files = glob.glob("%s*.mid" %(mel_train_dir))
 
 import sys
 
-print("Choose a resolution factor. (e.g. Resolution_Factor=24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution, etc...)")
 #resolution_factor = int(input('Resolution Factor (recommended=12):')) #24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution
-resolution_factor = int(sys.argv[1]) #24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution
-
-
+resolution_factor = 12 #24: 1/8 Resolution, 12: 1/16 Resolution, 6: 1/32 Resolution
 
 #Preprocessing: Get highest and lowest notes + maximum midi_ticks overall midi files
 chord_lowest_note, chord_highest_note, chord_ticks = data_utils_train.getNoteRangeAndTicks(chord_train_files, res_factor=resolution_factor)
@@ -58,8 +48,6 @@ chord_roll = data_utils_train.fromMidiCreatePianoRoll(chord_train_files, chord_t
                                                 res_factor=resolution_factor)
 mel_roll = data_utils_train.fromMidiCreatePianoRoll(mel_train_files, mel_ticks, mel_lowest_note, mel_highest_note,
                                               res_factor=resolution_factor)
-
-
 
 #Double each chord_roll and mel_roll. Preprocessing to create Input and Target Vector for Network
 double_chord_roll = data_utils_train.doubleRoll(chord_roll)
@@ -76,76 +64,49 @@ target_data = target_data.astype(np.bool)
 input_dim = (input_data.shape[1], input_data.shape[2])
 output_dim = target_data.shape[1]
 
+num_epochs = int(sys.argv[1])
 
-print()
-print("For how many epochs do you wanna train?")
+batch_size = 128
 
-num_epochs = int(sys.argv[2])
-print()
-
-print()
-print("Choose a batch size:")
-print("(Batch size determines how many training samples per gradient-update are used. --> Number of gradient-updates per epoch: Num of samples / batch size)")
-#batch_size = int(input('Batch Size (recommended=128):'))
-batch_size = int(sys.argv[3])
-print()
-
-print()
 print("Network Input Dimension:", input_dim)
 print("Network Output Dimension:", output_dim)
-print("How many layers should the network have?")
-num_layers = int(sys.argv[4])
-print()
 
-
-
+num_layers = 3
+num_units = [6,12]
 
 #Building the Network
 model = Sequential()
 if num_layers == 1:
-    print("Your Network:")
     model.add(LSTM(input_shape=input_dim, output_shape=output_dim, activation='sigmoid', return_sequences=False))
-    print("add(LSTM(input_dim=%d, output_dim=%d, activation='sigmoid', return_sequences=False))" %(input_dim, output_dim))
 elif num_layers > 1:
-    print("Enter the number of units for each layer:")
-    num_units = []
-    for i in range(num_layers-1):
-        units = int(input('Number of Units in Layer %d:' %(i+1)))
-        num_units.append(units)
-    print()
-    print("Your Network:")
     model.add(LSTM(num_units[0],input_shape=input_dim, activation='sigmoid', return_sequences=True))
-
     for i in range(num_layers-2):
         model.add(LSTM(num_units[i+1], activation='sigmoid', return_sequences=True))
-        print("add(LSTM(output_dim=%d, activation='sigmoid', return_sequences=True))" %(num_units[i+1]))
     model.add(LSTM(output_dim=output_dim, activation='sigmoid', return_sequences=False))
-    print("add(LSTM(output_dim=%d, activation='sigmoid', return_sequences=False))" %(output_dim))
 
 
-print()
-print()
 print("Compiling your network with the following properties:")
 loss_function = 'binary_crossentropy'
 optimizer = 'adam'
-class_mode = 'binary'
+
 print("Loss function: ", loss_function)
 print("Optimizer: ", optimizer)
-print("Class Mode: ", class_mode)
 print("Number of Epochs: ", num_epochs)
 print("Batch Size: ", batch_size)
 
 model.compile(loss=loss_function, optimizer=optimizer)
 
 
-print()
 print("Training...")
-history = data_utils_train.LossHistory()
-model.fit(input_data, target_data, batch_size=batch_size, epochs=num_epochs, callbacks=[history])
-w = csv.writer(open("./history_csv/%dlayer_%sepochs_%s.csv" %(num_layers, num_epochs, time.strftime("%Y%m%d_%H_%M")), "w"))
-for loss in history.losses:
-    w.writerow([loss])
 
+checkpoint = ModelCheckpoint(
+    filepath, monitor='loss', 
+    verbose=0,        
+    save_best_only=True,        
+    mode='min'
+)  
+
+model.fit(input_data, target_data, batch_size=batch_size, epochs=num_epochs, callbacks=[checkpoint])
 
 print()
 print("Saving model and weights...")
@@ -163,6 +124,3 @@ model_dir = './saved_model/'
 model_path = '%s%s' %(model_dir, model_file)
 print("Model Path:", model_path)
 open(model_path, 'w').write(json_string)
-
-print()
-print("Dope!")
