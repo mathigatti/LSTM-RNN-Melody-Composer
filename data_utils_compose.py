@@ -141,6 +141,7 @@ def createMidiFromPianoRoll(piano_roll, lowest_note, directory, mel_test_file, t
     delta_times = [0]
     for k in range(piano_roll.shape[1]):#initial starting values
         if piano_roll[0, k] == 1:
+            print("adding note on")
             track.append(Message('note_on', note=k+lowest_note, velocity=100, time=0))
             delta_times.append(0)
         
@@ -157,9 +158,11 @@ def createMidiFromPianoRoll(piano_roll, lowest_note, directory, mel_test_file, t
                     
                 if piano_roll[j+1, k] == 1 and piano_roll[j, k] == 0:
                     set_note += 1
+                    print("adding note on")
                     track.append(Message('note_on', note=k+lowest_note, velocity=100, time=time))
                 if piano_roll[j+1, k] == 0 and piano_roll[j, k] == 1:
                     set_note += 1
+                    print("adding note off")
                     track.append(Message('note_off', note=k+lowest_note, velocity=64, time=time))
                            
     mid.save('%s%s_th%s.mid' %(directory, mel_test_file, threshold))
