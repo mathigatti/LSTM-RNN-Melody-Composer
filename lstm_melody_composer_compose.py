@@ -63,7 +63,7 @@ print("Loading Model and Weights...")
 
 #Load model file
 model_dir = './weights/saved_model/'
-model_files = listdir(model_dir)
+model_files = list(filter(lambda x : x.endswith(".json"),listdir(model_dir)))
 
 file_number_model = 0
 model_file = model_files[file_number_model]
@@ -71,7 +71,7 @@ model_path = '%s%s' %(model_dir, model_file)
 
 #Load weights file
 weights_dir = './weights/'
-weights_files = listdir(weights_dir)
+weights_files = list(filter(lambda x : x.endswith(".h5"),listdir(weights_dir)))
 
 file_number_weights = 0
 weights_file = weights_files[file_number_weights]
