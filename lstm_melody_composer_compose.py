@@ -62,7 +62,7 @@ test_data = data_utils_compose.createNetInputs(double_chord_roll, seq_length=cho
 print("Loading Model and Weights...")
 
 #Load model file
-model_dir = './saved_model/'
+model_dir = './weights/saved_model/'
 model_files = listdir(model_dir)
 
 file_number_model = 0
@@ -78,9 +78,11 @@ weights_file = weights_files[file_number_weights]
 weights_path = '%s%s' %(weights_dir, weights_file)
 
 print("loading model...")
+print(model_path)
 model = model_from_json(open(model_path).read())
 
 print("loading weights...")
+print(weights_path)
 model.load_weights(weights_path)
 
 print("Compiling model...")
